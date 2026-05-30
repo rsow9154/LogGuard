@@ -19,20 +19,24 @@ Outil de cybersécurité qui analyse des logs système et réseau bruts pour dé
 | Communication | API REST / JSON |
 
 ## Architecture
+
+~~~
 Angular (localhost:4200)
-↓ POST /api/logevaluation/process
+    ↓ POST /api/logevaluation/process
 ASP.NET Core (localhost:5027)
-↓ ILogEvaluationService
+    ↓ ILogEvaluationService
 Ollama + Gemma2 (localhost:11434)
+~~~
+
 ## Prérequis
 
 - Node.js + Angular CLI
 - .NET 10 SDK
-- Ollama avec le modèle Gemma2 : `ollama pull gemma2:2b`
+- Ollama avec le modèle Gemma2 : ollama pull gemma2:2b
 
 ## Lancement
 
-```bash
+~~~bash
 # Terminal 1 — Back-end
 cd LogGuard
 dotnet run
@@ -43,7 +47,7 @@ ng serve
 
 # Terminal 3 — IA
 ollama serve
-```
+~~~
 
 ## Choix techniques
 
@@ -59,4 +63,3 @@ Inversion de dépendance — le contrôleur ne connaît pas Ollama directement. 
 ## Auteur
 
 Rassoulou SOW
-
