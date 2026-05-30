@@ -59,3 +59,4 @@ Inversion de dépendance — le contrôleur ne connaît pas Ollama directement. 
 ## Auteur
 
 Rassoulou SOW
+
