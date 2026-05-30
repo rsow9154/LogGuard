@@ -19,6 +19,11 @@ Outil de cybersécurité qui analyse des logs système et réseau bruts pour dé
 | Communication | API REST / JSON |
 
 ## Architecture
+Angular (localhost:4200)
+↓ POST /api/logevaluation/process
+ASP.NET Core (localhost:5027)
+↓ ILogEvaluationService
+Ollama + Gemma2 (localhost:11434)
 ## Prérequis
 
 - Node.js + Angular CLI
