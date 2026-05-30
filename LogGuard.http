@@ -1,0 +1,6 @@
+@LogGuard_HostAddress = http://localhost:5027
+
+GET {{LogGuard_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
