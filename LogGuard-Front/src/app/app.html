@@ -1,0 +1,299 @@
+﻿<div class="lg-root">
+
+  <div class="lg-bg">
+    <div class="lg-grid"></div>
+  </div>
+
+  <div class="lg-container">
+
+    <header class="lg-header">
+      <div class="lg-logo">
+        <div class="lg-shield">
+          <svg viewBox="0 0 40 48" fill="none">
+            <path d="M20 2L4 9v13c0 11 7 21 16 24 9-3 16-13 16-24V9L20 2z" fill="rgba(0,255,170,0.15)" stroke="#00ffaa" stroke-width="1.5"/>
+            <path d="M14 24l4 4 8-8" stroke="#00ffaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="lg-title">LogGuard</h1>
+          <p class="lg-subtitle">Système de détection d'intrusions par IA</p>
+        </div>
+      </div>
+      <div class="lg-status">
+        <span class="lg-dot"></span>
+        <span>Système opérationnel</span>
+      </div>
+    </header>
+
+    <div class="lg-body">
+
+      <div class="lg-input-panel">
+        <div class="lg-panel-header">
+          <span class="lg-panel-icon">⬡</span>
+          <span>Logs à analyser</span>
+        </div>
+        <textarea
+          [(ngModel)]="logsInput"
+          [disabled]="estEnCours"
+          class="lg-textarea"
+          placeholder="Collez vos logs ici...&#10;Ex: 2026-05-30 09:12:01 [AUTH] [WARN] Failed SSH login root from 185.220.101.47"></textarea>
+
+        <button
+          (click)="analyserLogs()"
+          [disabled]="estEnCours"
+          class="lg-btn"
+          [class.lg-btn-loading]="estEnCours">
+          <span *ngIf="!estEnCours" class="lg-btn-content">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Lancer l'analyse IA
+          </span>
+          <span *ngIf="estEnCours" class="lg-btn-content">
+            <span class="lg-spinner"></span>
+            Analyse en cours...
+          </span>
+        </button>
+      </div>
+
+      <div class="lg-result-panel" [style.display]="rapportHtml ? 'flex' : 'none'">
+        <div class="lg-panel-header">
+          <span class="lg-panel-icon">⬡</span>
+          <span>Rapport d'analyse</span>
+          <span class="lg-badge">Gemma2 · IA locale</span>
+        </div>
+        <div class="lg-report" [innerHTML]="rapportHtml"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.lg-root {
+  min-height: 100vh;
+  background: #060d1a;
+  color: #c8d8f0;
+  font-family: 'Exo 2', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.lg-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(ellipse at 20% 20%, rgba(0,80,180,0.15) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 80%, rgba(0,200,120,0.08) 0%, transparent 60%);
+}
+
+.lg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,255,170,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,170,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.lg-container {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.lg-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(0,255,170,0.15);
+}
+
+.lg-logo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.lg-shield {
+  width: 48px;
+  height: 56px;
+  filter: drop-shadow(0 0 12px rgba(0,255,170,0.4));
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(0,255,170,0.3)); }
+  50% { filter: drop-shadow(0 0 20px rgba(0,255,170,0.6)); }
+}
+
+.lg-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.lg-subtitle {
+  font-size: 12px;
+  color: rgba(0,255,170,0.7);
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.lg-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #00ffaa;
+  letter-spacing: 1px;
+}
+
+.lg-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00ffaa;
+  box-shadow: 0 0 8px #00ffaa;
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.lg-body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.lg-input-panel, .lg-result-panel {
+  background: rgba(10,20,40,0.8);
+  border: 1px solid rgba(0,255,170,0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.lg-result-panel {
+  flex-direction: column;
+}
+
+.lg-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: rgba(0,255,170,0.05);
+  border-bottom: 1px solid rgba(0,255,170,0.1);
+  font-size: 13px;
+  font-weight: 600;
+  color: #00ffaa;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.lg-panel-icon {
+  font-size: 16px;
+  opacity: 0.7;
+}
+
+.lg-badge {
+  margin-left: auto;
+  background: rgba(0,255,170,0.1);
+  border: 1px solid rgba(0,255,170,0.3);
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  color: #00ffaa;
+}
+
+.lg-textarea {
+  width: 100%;
+  height: 180px;
+  padding: 20px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #00ffaa;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.lg-textarea::placeholder { color: rgba(0,255,170,0.25); }
+.lg-textarea:disabled { opacity: 0.5; }
+
+.lg-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(0,255,170,0.15), rgba(0,100,255,0.15));
+  border: 1px solid rgba(0,255,170,0.4);
+  border-top: 1px solid rgba(0,255,170,0.2);
+  color: #00ffaa;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.lg-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(0,255,170,0.25), rgba(0,100,255,0.25));
+  box-shadow: 0 0 20px rgba(0,255,170,0.2);
+}
+
+.lg-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.lg-btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.lg-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0,255,170,0.3);
+  border-top-color: #00ffaa;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.lg-report {
+  padding: 24px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #c8d8f0;
+}
+
+.lg-report h2, .lg-report h3 {
+  color: #00ffaa;
+  margin: 16px 0 8px;
+  font-family: 'Exo 2', sans-serif;
+}
+
+.lg-report ul { padding-left: 20px; margin: 8px 0; }
+.lg-report li { margin: 6px 0; }
+.lg-report strong { color: #fff; }
+
+.lg-report p { margin: 8px 0; }
+</style>
